@@ -45,8 +45,82 @@
     <github.url>https://github.com/${github.user}/${github.repo}</github.url>
     <github.user>raisercostin</github.user>
     <java.version>17</java.version>
+    <springboot.version>3.1.5</springboot.version>
+    <vavr.version>0.10.2</vavr.version>
   </properties>
-  <dependencies/>
+  <dependencyManagement>
+    <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
+    <!-- First dependency WINS -->
+    <dependencies>
+<!--      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+-->      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${springboot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jdk8</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
+    </dependency>
+    <!--
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jetty</artifactId>
+    </dependency>
+    -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr</artifactId>
+      <version>${vavr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr-jackson</artifactId>
+      <version>${vavr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+  </dependencies>
   <repositories>
     <repository>
       <snapshots>
