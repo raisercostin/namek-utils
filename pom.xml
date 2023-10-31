@@ -7,7 +7,7 @@
     <version>1.23</version>
   </parent>
   <artifactId>namek-utils</artifactId>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>namek-utils</name>
   <url>${github.url}</url>
@@ -31,7 +31,7 @@
   <scm>
     <connection>scm:git:${github.url}.git</connection>
     <developerConnection>scm:git:${github.url}.git</developerConnection>
-    <tag>namek-utils-0.1</tag>
+    <tag>${project.artifactId}-${project.version}</tag>
     <url>${github.url}</url>
   </scm>
   <issueManagement>
