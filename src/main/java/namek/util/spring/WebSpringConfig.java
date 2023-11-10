@@ -1,9 +1,20 @@
 package namek.util.spring;
 
+import java.util.List;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.ServletRequestDataBinder;
+import org.springframework.web.bind.support.WebBindingInitializer;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.annotation.InitBinderDataBinderFactory;
+import org.springframework.web.method.support.InvocableHandlerMethod;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.ServletRequestDataBinderFactory;
 
 public class WebSpringConfig {
   // @Bean
@@ -50,4 +61,46 @@ public class WebSpringConfig {
   // filterRegistrationBean.setName("etagFilter");
   // return filterRegistrationBean;
   // }
+
+  public static WebMvcConfigurationSupport createWebMvcConfigurationSupport() {
+    return new WebMvcConfigurationSupport2();
+  }
+
+  /**
+  Solution inspired from https://stackoverflow.com/questions/22520496/how-do-i-inject-a-custom-version-of-webdatabinder-into-spring-3-mvc
+  Use this by doing
+  ```
+  @Configuration
+  public class Foo{
+    @Bean
+    public WebMvcConfigurationSupport create(){
+      //return new MyConfiguration();
+      return WebSpringConfig.createWebMvcConfigurationSupport();
+    }
+  }
+  */
+  public static class WebMvcConfigurationSupport2 extends WebMvcConfigurationSupport {
+    @Override
+    protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
+      return new RequestMappingHandlerAdapter()
+        {
+          @Override
+          protected InitBinderDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods)
+              throws Exception {
+            WebBindingInitializer webBindingInitializer = getWebBindingInitializer();
+            return new ServletRequestDataBinderFactory(binderMethods, webBindingInitializer)
+              {
+                @Override
+                protected ServletRequestDataBinder createBinderInstance(Object target, String objectName,
+                    NativeWebRequest request) throws Exception {
+                  ServletRequestDataBinder binder = super.createBinderInstance(target, objectName, request);
+                  binder.setIgnoreUnknownFields(false);
+                  binder.setIgnoreInvalidFields(false);
+                  return binder;
+                }
+              };
+          }
+        };
+    }
+  }
 }
