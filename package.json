@@ -1,5 +1,5 @@
 {
-  "name": "raisercostin-commons",
+  "name": "namek-utils",
   "scripts": {
     "normalize-pom": "ts-node scripts.ts normalizePom",
     "prerelease-prepare": "npm install",

@@ -114,11 +114,6 @@ public class NamekErrorController implements ErrorController {
       WebRequest webRequest, HttpServletResponse response, FilterChain chain) {
     try {
       Map<String, Object> body = getErrorAttributes(errorAttributes, webRequest, getTraceParameter(request));
-      String trace = (String) body.get("trace");
-      if (trace != null) {
-        String[] lines = trace.split("\n\t");
-        body.put("trace", lines);
-      }
       Array<Tuple2<String, String>> requestAttributes = Array
         .<String>ofAll(Collections.list(request.getAttributeNames()))
         .filter(x -> x != null && !x.equals("org.springframework.core.convert.ConversionService"))
@@ -150,6 +145,12 @@ public class NamekErrorController implements ErrorController {
           requestParameters.mkString("\n  - ", "\n  - ", "\n"),
           requestBody,
           LinkedHashMap.ofAll(errorAttributesParams).mkString("\n  - ", "\n  - ", "\n"), error);
+      }
+      //put trace at the end not to be shown twice in previous logs
+      String trace = (String) body.get("trace");
+      if (trace != null) {
+        String[] lines = trace.split("\n\t");
+        body.put("trace", lines);
       }
       return body;
     } catch (Exception e) {
